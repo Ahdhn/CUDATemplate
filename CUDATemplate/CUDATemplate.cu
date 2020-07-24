@@ -3,7 +3,7 @@
 #include <cuda_runtime.h>
 
 
-__global__ static void testKernel()
+__global__ void testKernel()
 {
     printf("\n I am thread %d", threadIdx.x);
 }
