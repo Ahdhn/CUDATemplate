@@ -1,5 +1,5 @@
 #CMake minimum requirement 
-cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 #Project name 
 set(PROJECT_NAME "CUDATemplate")#<TODO> change this to the name of your project 
