@@ -5,35 +5,36 @@ if(NOT DEFINED CUDA_ARCHS)
 	#Auto-detect cuda arch. Inspired by https://wagonhelm.github.io/articles/2018-03/detecting-cuda-capability-with-cmake
 	# This will define and populates CUDA_ARCHS and put it in the cache 	
 	set(cuda_arch_autodetect_file ${CMAKE_BINARY_DIR}/autodetect_cuda_archs.cu)		
+	file(WRITE ${cuda_arch_autodetect_file} [[
+		#include <stdio.h>
+		int main() {
+		int count = 0; 
+		if (cudaSuccess != cudaGetDeviceCount(&count)) { return -1; }
+		if (count == 0) { return -1; }
+		for (int device = 0; device < count; ++device) {
+			cudaDeviceProp prop; 
+			bool is_unique = true; 
+			if (cudaSuccess == cudaGetDeviceProperties(&prop, device)) {
+				for (int device_1 = device - 1; device_1 >= 0; --device_1) {
+					cudaDeviceProp prop_1; 
+					if (cudaSuccess == cudaGetDeviceProperties(&prop_1, device_1)) {
+						if (prop.major == prop_1.major && prop.minor == prop_1.minor) {
+							is_unique = false; 
+							break; 
+						}
+					}
+					else { return -1; }
+				}
+				if (is_unique) {
+					fprintf(stderr, "--generate-code=arch=compute_%d%d,code=sm_%d%d;", prop.major, prop.minor, prop.major, prop.minor);
+				}
+			}
+			else { return -1; }
+		}
+		return 0; 
+		}
+		]])
 	
-	file(WRITE ${cuda_arch_autodetect_file} ""
-	"#include <stdio.h>\n"
-	"int main() {\n"
-	"	int count = 0; \n"
-	"	if (cudaSuccess != cudaGetDeviceCount(&count)) { return -1; }\n"
-	"	if (count == 0) { return -1; }\n"
-	"	for (int device = 0; device < count; ++device) {\n"
-	"		cudaDeviceProp prop; \n"
-	"		bool is_unique = true; \n"
-	"		if (cudaSuccess == cudaGetDeviceProperties(&prop, device)) {\n"
-	"			for (int device_1 = device - 1; device_1 >= 0; --device_1) {\n"
-	"				cudaDeviceProp prop_1; \n"
-	"				if (cudaSuccess == cudaGetDeviceProperties(&prop_1, device_1)) {\n"
-	"					if (prop.major == prop_1.major && prop.minor == prop_1.minor) {\n"
-	"						is_unique = false; \n"
-	"						break; \n"
-	"					}\n"
-	"				}\n"
-	"				else { return -1; }\n"
-	"			}\n"
-	"			if (is_unique) {\n"
-	"				fprintf(stderr, \" -gencode=arch=compute_%d%d,code=sm_%d%d;\", prop.major, prop.minor, prop.major, prop.minor);\n"
-	"			}\n"
-	"		}\n"
-	"		else { return -1; }\n"
-	"	}\n"
-	"	return 0; \n"
-	"}\n")	
 	set(cuda_detect_cmd  "${CUDA_NVCC_EXECUTABLE} -ccbin ${CMAKE_CXX_COMPILER} --run ${cuda_arch_autodetect_file}")
     message(STATUS "Executing: ${cuda_detect_cmd}")
 	execute_process(COMMAND "${CUDA_NVCC_EXECUTABLE}" "-ccbin" "${CMAKE_CXX_COMPILER}" "--run" "${cuda_arch_autodetect_file}"
@@ -58,9 +59,6 @@ if(NOT DEFINED CUDA_ARCHS)
 		               -gencode arch=compute_75,code=sm_75
 					   CACHE STRING "CUDA Arch")			
 	endif()  	
-	message(STATUS "CUDA_ARCHS= " ${CUDA_ARCHS})	
+	message(STATUS "CUDA_ARCHS=" ${CUDA_ARCHS})	
 endif()
 ###################################################################################
-
-list(APPEND CUDA_NVCC_FLAGS ${CUDA_ARCHS})
-list(APPEND CMAKE_CUDA_FLAGS ${CUDA_ARCHS})

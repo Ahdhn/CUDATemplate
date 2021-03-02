@@ -2,8 +2,12 @@
 cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 
 #Project name 
-set(PROJECT_NAME "CUDATemplate")#<--- 
+set(PROJECT_NAME "CUDATemplate")#<TODO> change this to the name of your project 
 project(${PROJECT_NAME} LANGUAGES CXX CUDA)  
+
+if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.18)
+  cmake_policy(SET CMP0104 OLD)
+endif()
 
 #default build type is Release
 if (CMAKE_BUILD_TYPE STREQUAL "")
@@ -23,7 +27,7 @@ target_include_directories(${PROJECT_NAME}
 )
 
 #GLOB source files 
-file(GLOB_RECURSE SrcFiles ${CMAKE_SOURCE_DIR}/CUDATemplate/*.*)#<---
+file(GLOB_RECURSE SrcFiles ${CMAKE_SOURCE_DIR}/CUDATemplate/*.*)#<TODO> change this to add your files 
 
 
 #Pass the source files to the executable 
