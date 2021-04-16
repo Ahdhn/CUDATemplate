@@ -63,3 +63,9 @@ target_compile_options(developer_flags INTERFACE
 target_link_libraries( ${PROJECT_NAME}   
 	PRIVATE $<BUILD_INTERFACE:developer_flags>	
 )
+
+#OpenMP
+find_package(OpenMP)
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(MyTarget PUBLIC OpenMP::OpenMP_CXX)
+endif()
