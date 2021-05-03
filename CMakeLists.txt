@@ -44,6 +44,7 @@ include("cmake/AutoDetectCudaArch.cmake")
 set(cxx_flags -m64 -Wall -std=c++14 $<$<STREQUAL:${MSVC},1>:-D_SCL_SECURE_NO_WARNINGS>	)
 set(cuda_flags
     -Xcompiler=-Wall
+    -Xcompiler=-fopenmp
     -Xcudafe=--display_error_number
     ${CUDA_ARCHS}
 	-lineinfo	
