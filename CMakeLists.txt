@@ -21,7 +21,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
 #Executable
 add_executable(${PROJECT_NAME})
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_14)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 target_include_directories(${PROJECT_NAME}    
     PRIVATE ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}
 )
@@ -41,10 +41,10 @@ include("cmake/AutoDetectCudaArch.cmake")
 
 
 # CUDA and C++ compiler flags
-set(cxx_flags -m64 -Wall -std=c++14 $<$<STREQUAL:${MSVC},1>:-D_SCL_SECURE_NO_WARNINGS>	)
+set(cxx_flags -std=c++17 $<$<CXX_COMPILER_ID:MSVC>:-D_SCL_SECURE_NO_WARNINGS /openmp> $<$<CXX_COMPILER_ID:GNU>:-Wall -m64 -fopenmp>)
 set(cuda_flags
-    -Xcompiler=-Wall
-    -Xcompiler=-fopenmp
+     -Xcompiler=-Wall    
+	 -Xcompiler=-fopenmp
     -Xcudafe=--display_error_number
     ${CUDA_ARCHS}
 	-lineinfo	
