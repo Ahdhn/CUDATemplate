@@ -41,17 +41,20 @@ include("cmake/AutoDetectCudaArch.cmake")
 
 
 # CUDA and C++ compiler flags
-set(cxx_flags -std=c++17 $<$<CXX_COMPILER_ID:MSVC>:-D_SCL_SECURE_NO_WARNINGS /openmp> $<$<CXX_COMPILER_ID:GNU>:-Wall -m64 -fopenmp>)
+set(cxx_flags 
+	$<$<CXX_COMPILER_ID:MSVC>:-D_SCL_SECURE_NO_WARNINGS /openmp /std:c++17> #<TODO> Add MSVC-specific compiler flags here
+	$<$<CXX_COMPILER_ID:GNU>:-Wall -m64 -fopenmp -O3 -std=c++17>            #<TODO> Add GCC/Clang-specific compiler flags here
+	)
+
 set(cuda_flags
-     -Xcompiler=-Wall    
-	 -Xcompiler=-fopenmp
+    -Xcompiler=$<$<CXX_COMPILER_ID:GNU>:-Wall -fopenmp -O3>
     -Xcudafe=--display_error_number
     ${CUDA_ARCHS}
 	-lineinfo	
 	--expt-extended-lambda	
 	-use_fast_math	
 	#-Xptxas -warn-spills -res-usage #-v
-	$<$<STREQUAL:${MSVC},0>:-O3>
+    $<$<CXX_COMPILER_ID:GNU>:-O3>	
     #-G	
 )
 add_library(developer_flags INTERFACE)
