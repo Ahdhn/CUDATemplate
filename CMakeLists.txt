@@ -19,6 +19,16 @@ endif ()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
 
+include(FetchContent)
+# GoogleTest
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_Declare(googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG        eaf9a3fd77869cf95befb87455a2e2a2e85044ff
+)
+FetchContent_MakeAvailable(googletest)
+include(GoogleTest)
+
 #Executable
 add_executable(${PROJECT_NAME})
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
@@ -66,6 +76,7 @@ target_compile_options(developer_flags INTERFACE
 #Pass the flags to the executable
 target_link_libraries( ${PROJECT_NAME}   
 	PRIVATE $<BUILD_INTERFACE:developer_flags>	
+	PRIVATE gtest_main
 )
 
 #OpenMP
@@ -73,3 +84,6 @@ find_package(OpenMP)
 if(OpenMP_CXX_FOUND)
     target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
 endif()
+
+enable_testing()
+gtest_discover_tests(${PROJECT_NAME})

@@ -1,17 +1,23 @@
-#include <stdio.h>
 #include <assert.h>
 #include <cuda_runtime.h>
-
+#include <stdio.h>
+#include "gtest/gtest.h"
 
 __global__ void testKernel()
 {
-    printf("\n I am thread %d", threadIdx.x);
+    printf("\n I am thread %d\n", threadIdx.x);
 }
 
-int main(int argc, char **argv)
-{     
+TEST(Test, simple)
+{
     testKernel<<<1, 1>>>();
-    cudaDeviceSynchronize();
-    return EXIT_SUCCESS;
+    auto err = cudaDeviceSynchronize();
+    EXPECT_EQ(err, cudaSuccess);
 }
 
+int main(int argc, char** argv)
+{
+    ::testing::InitGoogleTest(&argc, argv);
+
+    return RUN_ALL_TESTS();
+}
