@@ -47,16 +47,17 @@ if(NOT DEFINED CUDA_ARCHS)
 		set(CUDA_ARCHS ${fprintf_output} CACHE STRING "CUDA Arch")			
 	else()
 		message(STATUS "GPU architectures auto-detect failed. Will build for all possible architectures.")      
-		set(CUDA_ARCHS -gencode arch=compute_30,code=sm_30
-		               -gencode arch=compute_35,code=sm_35
-		               -gencode arch=compute_37,code=sm_37
-		               -gencode arch=compute_50,code=sm_50
-		               -gencode arch=compute_52,code=sm_52
-		               -gencode arch=compute_60,code=sm_60
-		               -gencode arch=compute_61,code=sm_61
-		               -gencode arch=compute_70,code=sm_70
-		               -gencode arch=compute_72,code=sm_72
-		               -gencode arch=compute_75,code=sm_75
+		set(CUDA_ARCHS --generate-code=arch=compute_35,code=sm_35
+					   --generate-code=arch=compute_37,code=sm_37					   
+					   --generate-code=arch=compute_50,code=sm_50
+					   --generate-code=arch=compute_52,code=sm_52
+					   --generate-code=arch=compute_60,code=sm_60
+					   --generate-code=arch=compute_61,code=sm_61
+					   --generate-code=arch=compute_70,code=sm_70
+					   --generate-code=arch=compute_72,code=sm_72
+					   --generate-code=arch=compute_75,code=sm_75
+					   --generate-code=arch=compute_80,code=sm_80
+					   --generate-code=arch=compute_86,code=sm_86
 					   CACHE STRING "CUDA Arch")			
 	endif()  	
 	message(STATUS "CUDA_ARCHS=" ${CUDA_ARCHS})	
