@@ -7,8 +7,7 @@ jobs:
       - uses: Jimver/cuda-toolkit@v0.2.4
         id: cuda-toolkit
         with:
-          cuda: '11.3.1'
-          linux-local-args: '["--toolkit"]'      
+          cuda: '11.3.1'          
       - run: nvcc -V      
       - name: Checkout
         uses: actions/checkout@v2            
