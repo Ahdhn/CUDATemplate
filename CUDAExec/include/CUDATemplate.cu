@@ -3,14 +3,16 @@
 #include <stdio.h>
 #include "gtest/gtest.h"
 
-__global__ void testKernel()
+
+
+__global__ void exec_kernel()
 {
-    printf("\n I am thread %d\n", threadIdx.x);
+    printf("\n I am thread %d from exec_kernel\n", threadIdx.x);
 }
 
 TEST(Test, simple)
 {
-    testKernel<<<1, 1>>>();
+    exec_kernel<<<1, 1>>>();
     auto err = cudaDeviceSynchronize();
     EXPECT_EQ(err, cudaSuccess);
 }

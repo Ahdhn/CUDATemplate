@@ -1,5 +1,5 @@
 #CMake minimum requirement 
-cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
 #Project name 
 set(project_name "CUDATemplate")#<TODO> change this to the name of your project 
@@ -12,11 +12,13 @@ if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.18)
 	set(CMAKE_POLICY_DEFAULT_CMP0104 OLD)  
 endif()
 
+#toggle between building a shared or static library
+option(MY_BUILD_SHARED_LIBS "Build as shared library" OFF)
+
 #default build type is Release
 if (CMAKE_BUILD_TYPE STREQUAL "")
     set(CMAKE_BUILD_TYPE Release)
 endif ()
-
 
 # Direct all output to /bin directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
@@ -70,4 +72,5 @@ endif()
 
 enable_testing()
 
+add_subdirectory(CUDALib)
 add_subdirectory(CUDAExec)
