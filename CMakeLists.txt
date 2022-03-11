@@ -2,11 +2,14 @@
 cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 #Project name 
-set(PROJECT_NAME "CUDATemplate")#<TODO> change this to the name of your project 
-project(${PROJECT_NAME} LANGUAGES CXX CUDA)  
+set(project_name "CUDATemplate")#<TODO> change this to the name of your project 
+project(${project_name} LANGUAGES CXX C CUDA)  
 
+#TODO This mutes the warning about "empty CUDA_ARCHITECTURES not allowed"
+#The modern way to set CUDA arch is per target e.g.,
+#set_property(TARGET tgt PROPERTY CUDA_ARCHITECTURES 35 50 72)
 if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.18)
-  cmake_policy(SET CMP0104 OLD)
+	set(CMAKE_POLICY_DEFAULT_CMP0104 OLD)  
 endif()
 
 #default build type is Release
@@ -29,26 +32,9 @@ FetchContent_Declare(googletest
 FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
 
-#Executable
-add_executable(${PROJECT_NAME})
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
-target_include_directories(${PROJECT_NAME}    
-    PRIVATE ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}
-)
-
-#GLOB source files 
-file(GLOB_RECURSE SrcFiles ${CMAKE_SOURCE_DIR}/CUDATemplate/*.*)#<TODO> change this to add your files 
-
-
-#Pass the source files to the executable 
-target_sources( ${PROJECT_NAME} 
-    PRIVATE ${SrcFiles}
-)
-
 
 # Auto-detect GPU architecture, sets ${CUDA_ARCHS}
 include("cmake/AutoDetectCudaArch.cmake")
-
 
 # CUDA and C++ compiler flags
 set(cxx_flags 
@@ -62,9 +48,11 @@ set(cuda_flags
     ${CUDA_ARCHS}
 	-lineinfo	
 	--expt-extended-lambda	
-	-use_fast_math	
-	#-Xptxas -warn-spills -res-usage #-v
+	-use_fast_math		
     $<$<CXX_COMPILER_ID:GNU>:-O3>	
+	--expt-relaxed-constexpr	
+    -Xptxas -warn-spills -res-usage   
+	--ptxas-options=-v	
     #-G	
 )
 add_library(developer_flags INTERFACE)
@@ -72,18 +60,14 @@ target_compile_options(developer_flags INTERFACE
     $<$<COMPILE_LANGUAGE:CXX>:${cxx_flags}>
     $<$<COMPILE_LANGUAGE:CUDA>:${cuda_flags}>
 )
-
-#Pass the flags to the executable
-target_link_libraries( ${PROJECT_NAME}   
-	PRIVATE $<BUILD_INTERFACE:developer_flags>	
-	PRIVATE gtest_main
-)
+target_include_directories(developer_flags INTERFACE ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
 
 #OpenMP
 find_package(OpenMP)
 if(OpenMP_CXX_FOUND)
-    target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
+    target_link_libraries(developer_flags INTERFACE OpenMP::OpenMP_CXX)
 endif()
 
 enable_testing()
-gtest_discover_tests(${PROJECT_NAME})
+
+add_subdirectory(CUDAExec)
