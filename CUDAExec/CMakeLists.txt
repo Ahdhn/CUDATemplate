@@ -11,7 +11,7 @@ add_executable(${exec_name} ${src_files})
 
 #Libs linked to the executable
 target_link_libraries( ${exec_name}   
-	${lib_name}
+	CUDALib
 	$<BUILD_INTERFACE:developer_flags>	
 	gtest_main
 )
