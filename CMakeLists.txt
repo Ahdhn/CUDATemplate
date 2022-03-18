@@ -1,5 +1,5 @@
 #CMake minimum requirement 
-cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
 
 #Project name 
 set(project_name "CUDATemplate")#<TODO> change this to the name of your project 
@@ -66,6 +66,8 @@ target_compile_options(developer_flags INTERFACE
     $<$<COMPILE_LANGUAGE:CUDA>:${cuda_flags}>
 )
 target_include_directories(developer_flags INTERFACE ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
+
+target_compile_features(developer_flags INTERFACE cxx_std_17)
 
 #OpenMP
 find_package(OpenMP)

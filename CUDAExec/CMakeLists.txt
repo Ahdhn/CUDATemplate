@@ -1,5 +1,5 @@
 #CMake minimum requirement 
-cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
 
 set(exec_name "CUDAExec")
 
