@@ -16,4 +16,4 @@ target_link_libraries( ${exec_name}
 	gtest_main
 )
 
-gtest_discover_tests(${exec_name})
+#gtest_discover_tests(${exec_name})
