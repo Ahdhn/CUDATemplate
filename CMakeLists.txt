@@ -5,13 +5,6 @@ cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
 set(project_name "CUDATemplate")#<TODO> change this to the name of your project 
 project(${project_name} LANGUAGES CXX C CUDA)  
 
-#TODO This mutes the warning about "empty CUDA_ARCHITECTURES not allowed"
-#The modern way to set CUDA arch is per target e.g.,
-#set_property(TARGET tgt PROPERTY CUDA_ARCHITECTURES 35 50 72)
-if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.18)
-	set(CMAKE_POLICY_DEFAULT_CMP0104 OLD)  
-endif()
-
 #toggle between building a shared or static library
 option(MY_BUILD_SHARED_LIBS "Build as shared library" OFF)
 
@@ -35,7 +28,7 @@ FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
 
 
-# Auto-detect GPU architecture, sets ${CUDA_ARCHS}
+# Auto-detect GPU architecture
 include("cmake/AutoDetectCudaArch.cmake")
 
 # CUDA and C++ compiler flags
@@ -49,8 +42,7 @@ set(cuda_flags
     $<$<CXX_COMPILER_ID:GNU>:-Xcompiler -Wall -fopenmp -O3>
 	$<$<CXX_COMPILER_ID:Clang>:-Xcompiler -Wall -fopenmp -O3>
 	$<$<CXX_COMPILER_ID:MSVC>:-Xcompiler /std:c++17>
-    -Xcudafe=--display_error_number
-    ${CUDA_ARCHS}
+    -Xcudafe=--display_error_number    
 	-lineinfo	
 	--expt-extended-lambda	
 	-use_fast_math		
