@@ -38,10 +38,11 @@ set(cxx_flags
 	$<$<CXX_COMPILER_ID:Clang>:-Wall -m64 -fopenmp -O3 -std=c++17>          #<TODO> Add Clang compiler flags here
 	)
 
+set(MSVC_XCOMPILER_FLAGS "/openmp /std:c++17")
 set(cuda_flags
     $<$<CXX_COMPILER_ID:GNU>:-Xcompiler -Wall -fopenmp -O3>
 	$<$<CXX_COMPILER_ID:Clang>:-Xcompiler -Wall -fopenmp -O3>
-	$<$<CXX_COMPILER_ID:MSVC>:-Xcompiler /std:c++17>
+	$<$<CXX_COMPILER_ID:MSVC>:-Xcompiler ${MSVC_XCOMPILER_FLAGS}>
     -Xcudafe=--display_error_number    
 	-lineinfo	
 	--expt-extended-lambda	
